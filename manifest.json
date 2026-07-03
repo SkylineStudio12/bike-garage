@@ -1,0 +1,9 @@
+{
+  "name": "Bike Log",
+  "short_name": "Bike Log",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F2F3F1",
+  "theme_color": "#0F110F",
+  "icons": [{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }]
+}
