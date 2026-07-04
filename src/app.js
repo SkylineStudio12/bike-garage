@@ -13132,11 +13132,15 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
 .tabbar button { width:48px; height:48px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
   background:none; border:none; padding:0; cursor:pointer;
-  color:rgba(255,255,255,.55);
+  color:#fff;
   transition:transform .12s, background .15s, color .15s; }
-.tabbar button svg { width:21px; height:21px; }
+/* Dim inactive icons via element opacity (not a translucent color) so
+   multi-stroke icons like Storage don't get denser where strokes overlap. */
+.tabbar button svg { width:21px; height:21px; opacity:.55; }
 .tabbar button.on { background:var(--accent); color:var(--accent-ink); }
+.tabbar button.on svg { opacity:1; }
 .tabbar .tab-plus { background:rgba(255,255,255,.14); color:#fff; }
+.tabbar .tab-plus svg { opacity:1; }
 .tabbar button:active { transform:scale(.9); }
 
 /* part view */
@@ -13155,19 +13159,19 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
 .stat-card--tap { cursor:pointer; transition:transform .12s; }
 .stat-card--tap:active { transform:scale(.985); }
 
-/* stats (dark) */
-.stat-block { background:rgba(255,255,255,.06); border-radius:var(--r-panel);
+/* stats */
+.stat-block { background:var(--tint); border-radius:var(--r-panel);
   padding:16px; margin-bottom:14px; }
 .bars { display:flex; flex-direction:column; gap:10px; }
 .bars__row { display:flex; align-items:center; gap:10px; }
-.bars__label { width:86px; font-size:12px; color:rgba(255,255,255,.55);
+.bars__label { width:86px; font-size:12px; color:var(--mute);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.bars__track { flex:1; height:26px; border-radius:8px; background:rgba(255,255,255,.07); overflow:hidden; }
-.bars__fill { height:100%; border-radius:8px; background:rgba(255,255,255,.28); transition:width .3s; }
+.bars__track { flex:1; height:26px; border-radius:8px; background:rgba(15,17,15,.07); overflow:hidden; }
+.bars__fill { height:100%; border-radius:8px; background:rgba(15,17,15,.28); transition:width .3s; }
 .bars__row.top .bars__fill { background:var(--accent); }
 .bars__val { min-width:64px; text-align:right;
   font-family:var(--font-display); font-weight:500; font-size:13px; }
-.bars__row.top .bars__val { color:var(--accent); }
+.bars__row.top .bars__val { color:var(--accent-ink); }
 
 /* header save pill */
 .btn--sm { width:auto; padding:9px 16px; font-size:14px; margin:0; }
@@ -15814,7 +15818,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
       r = (g) => u.filter((v) => v.bike_id === g.id),
       c = (g) => g.toLocaleString("en-US");
     return (0, d.jsxs)("div", {
-      className: "app app--dark",
+      className: "app",
       children: [
         (0, d.jsxs)("div", {
           className: "topbar",
@@ -15883,7 +15887,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
         }),
         (0, d.jsx)("div", {
           className: "field__hint",
-          style: { color: "rgba(255,255,255,.4)" },
+          style: { color: "var(--mute)" },
           children:
             "Part prices count toward the bike they're mounted on right now. Trainers sit this one out.",
         }),
@@ -17300,8 +17304,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
         children: [
           (0, d.jsx)("style", { children: k0 }),
           (0, d.jsx)("div", { className: "screen-in", children: V }, JSON.stringify(I)),
-          (I.screen === "garage" || I.screen === "storage" || I.screen === "stats") &&
-            (0, d.jsx)(wm, {
+          (0, d.jsx)(wm, {
               active: I.screen,
               onGarage: () => q({ screen: "garage" }),
               onStorage: () => q({ screen: "storage" }),
