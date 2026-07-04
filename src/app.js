@@ -12655,6 +12655,17 @@ Error generating stack: ` +
       ["path", { d: "M10 12h4", key: "a56b0p" }],
     ],
     To = W("archive", Np);
+  var bellPaths = [
+      ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
+      [
+        "path",
+        {
+          d: "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326",
+          key: "11g9vi",
+        },
+      ],
+    ],
+    Nbell = W("bell", bellPaths);
   var Up = [
       ["path", { d: "M5 12h14", key: "1ays0h" }],
       ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }],
@@ -12875,6 +12886,10 @@ body { background:var(--paper); font-family:var(--font-body); }
 .circle--tint { background:var(--tint); color:var(--ink); }
 .circle--sm { width:40px; height:40px; }
 .circle--sm svg { width:17px; height:17px; }
+.notif-badge { position:absolute; top:-3px; right:-3px; min-width:18px; height:18px;
+  padding:0 5px; border-radius:9px; background:var(--warn); color:#fff;
+  font-size:11px; font-weight:600; line-height:1;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px var(--paper); }
 
 .display { font-family:var(--font-display); font-weight:700; font-size:42px; line-height:1.04; letter-spacing:-0.02em; }
 .display--md { font-size:32px; }
@@ -13632,6 +13647,18 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
       return Po(u ? o.filter((i) => i.date >= u) : o);
     },
     Sn = (a, e) => (e ? (a >= e ? "over" : a / e >= 0.8 ? "near" : "ok") : "ok"),
+    svcAlerts = (bikes, parts, installs, rides) =>
+      parts
+        .filter((p) => !p.retired && p.interval_m)
+        .map((p) => {
+          let bid = jt(installs, p.id),
+            bk = bid ? bikes.find((b) => b.id === bid) : null;
+          if (!bk || bk.retired) return null;
+          let used = Au(p, installs, rides);
+          return Sn(used, p.interval_m) === "over" ? { part: p, bike: bk, used } : null;
+        })
+        .filter(Boolean)
+        .sort((x, y) => y.used / y.part.interval_m - x.used / x.part.interval_m),
     rm = (a, e, t, l) =>
       !a.retired &&
       !a.trainer &&
@@ -15930,6 +15957,68 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
       ],
     });
   }
+  function NotifPanel({ bikes: a, parts: e, installs: t, rides: l, onOpen: u }) {
+    let o = svcAlerts(a, e, t, l);
+    return (0, d.jsx)("div", {
+      className: "flat",
+      children: o.length
+        ? o.map((i) =>
+            (0, d.jsxs)(
+              "button",
+              {
+                className: "flat__row",
+                onClick: () => u(i.bike.id),
+                children: [
+                  (0, d.jsx)("span", {
+                    className: "circle circle--tint circle--sm",
+                    "aria-hidden": "true",
+                    children: (0, d.jsx)(Iu, { type: i.part.type }),
+                  }),
+                  (0, d.jsxs)("div", {
+                    className: "flat__body",
+                    children: [
+                      (0, d.jsxs)("div", {
+                        className: "flat__value",
+                        children: [
+                          i.part.name,
+                          (0, d.jsx)("span", {
+                            className: "chip chip--over",
+                            style: { marginLeft: 8 },
+                            children: "Due",
+                          }),
+                        ],
+                      }),
+                      (0, d.jsxs)("div", {
+                        className: "flat__label",
+                        children: [
+                          i.bike.name,
+                          " \xB7 ",
+                          Da(i.used),
+                          " / ",
+                          Da(i.part.interval_m),
+                          " km",
+                        ],
+                      }),
+                    ],
+                  }),
+                  (0, d.jsx)("span", {
+                    className: "flat__chev",
+                    "aria-hidden": "true",
+                    children: (0, d.jsx)(ue, {}),
+                  }),
+                ],
+              },
+              i.part.id,
+            ),
+          )
+        : (0, d.jsx)("div", {
+            className: "field__hint",
+            style: { padding: "8px 0" },
+            children:
+              "Nothing needs service right now. Every tracked component is within its interval.",
+          }),
+    });
+  }
   function Tm({
     bikes: a,
     rides: e,
@@ -15939,17 +16028,29 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
     onOpenBike: o,
     onAddBike: i,
     onImport: f,
+    onNotifications: onNotifs,
   }) {
     let r = a.reduce((v, h) => v + Ho(h, e), 0),
       c = a.filter((v) => !v.retired).sort((v, h) => (h.primary ? 1 : 0) - (v.primary ? 1 : 0)),
-      g = a.filter((v) => v.retired);
+      g = a.filter((v) => v.retired),
+      nAlerts = svcAlerts(a, t, l, e);
     return (0, d.jsxs)("div", {
       className: "app",
       children: [
         (0, d.jsxs)("div", {
           className: "topbar",
           children: [
-            (0, d.jsx)("span", {}),
+            (0, d.jsxs)("button", {
+              className: "circle circle--light",
+              "aria-label": "Notifications",
+              onClick: onNotifs,
+              style: { position: "relative" },
+              children: [
+                (0, d.jsx)(Nbell, {}),
+                nAlerts.length > 0 &&
+                  (0, d.jsx)("span", { className: "notif-badge", children: nAlerts.length }),
+              ],
+            }),
             (0, d.jsx)("div", {
               className: "topbar__group",
               children: (0, d.jsx)("button", {
@@ -17299,6 +17400,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
                   onOpenBike: (y) => q({ screen: "bike", bikeId: y }),
                   onAddBike: () => s({ type: "bike" }),
                   onImport: () => s({ type: "import" }),
+                  onNotifications: () => s({ type: "notifications" }),
                 })),
       (0, d.jsxs)(d.Fragment, {
         children: [
@@ -17378,6 +17480,21 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
               title: "Mount on\u2026",
               onClose: () => s(null),
               children: (0, d.jsx)(Im, { bikes: t, onPick: (y) => ha(M.part, y) }),
+            }),
+          M?.type === "notifications" &&
+            (0, d.jsx)(Ye, {
+              title: "Notifications",
+              onClose: () => s(null),
+              children: (0, d.jsx)(NotifPanel, {
+                bikes: t,
+                parts: i,
+                installs: r,
+                rides: u,
+                onOpen: (y) => {
+                  s(null);
+                  q({ screen: "bike", bikeId: y });
+                },
+              }),
             }),
           M?.type === "settings" &&
             (0, d.jsxs)(Ye, {
