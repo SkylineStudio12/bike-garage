@@ -1,0 +1,15 @@
+{
+  "name": "bike-log",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bike Log PWA — source + lossless build for the deployed index.html",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "smoke": "node smoke.cjs",
+    "check": "node build.mjs && node smoke.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "^22.1.0"
+  }
+}
