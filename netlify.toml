@@ -1,0 +1,8 @@
+# The site is a prebuilt static bundle: index.html is committed already-built.
+# No build step should run on Netlify — the repo's package.json is only for the
+# local source workflow (src/ + build.mjs + smoke.cjs). This no-op command
+# overrides any auto-detected/UI build command so a push just publishes the
+# committed files as-is.
+[build]
+  command = "echo 'No build — publishing committed static files'"
+  publish = "."
