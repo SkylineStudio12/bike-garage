@@ -13137,7 +13137,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
 
 /* bottom tab bar */
 .tabbar { position:fixed; left:16px; right:16px;
-  bottom:calc(12px + env(safe-area-inset-bottom)); z-index:40;
+  bottom:max(16px, env(safe-area-inset-bottom)); z-index:40;
   max-width:398px; margin:0 auto;
   display:flex; justify-content:space-between; align-items:center;
   padding:8px; border-radius:999px;
@@ -13174,19 +13174,32 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
 .stat-card--tap { cursor:pointer; transition:transform .12s; }
 .stat-card--tap:active { transform:scale(.985); }
 
-/* stats */
-.stat-block { background:var(--tint); border-radius:var(--r-panel);
-  padding:16px; margin-bottom:14px; }
+/* stats — black frozen glass cards (same material as the bikecard HUD) */
+.stat-block { position:relative; background:rgba(15,17,15,.85);
+  -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px);
+  border:1px solid rgba(255,255,255,.08); border-radius:var(--r-panel);
+  padding:16px; margin-bottom:14px; color:#F2F3F1; }
+.stat-block .panel__label { color:rgba(255,255,255,.55); }
+/* vertical bar chart */
+.vbars { display:flex; align-items:flex-end; gap:10px; }
+.vbars__col { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-end; }
+.vbars__name { font-size:12px; color:rgba(255,255,255,.55);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.vbars__num { font-family:var(--font-display); font-weight:600; font-size:17px; color:#fff;
+  margin:2px 0 8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vbars__num small { font-size:11px; font-weight:500; color:rgba(255,255,255,.55); margin-left:2px; }
+.vbars__bar { width:100%; border-radius:14px; background:rgba(255,255,255,.22);
+  min-height:14px; transition:height .3s; }
+.vbars__col.top .vbars__bar { background:var(--accent); }
+.vbars__col.top .vbars__num { color:var(--accent); }
+/* cost-per-km rows */
 .bars { display:flex; flex-direction:column; gap:10px; }
 .bars__row { display:flex; align-items:center; gap:10px; }
-.bars__label { width:86px; font-size:12px; color:var(--mute);
+.bars__label { width:86px; font-size:12px; color:rgba(255,255,255,.55);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.bars__track { flex:1; height:26px; border-radius:8px; background:rgba(15,17,15,.07); overflow:hidden; }
-.bars__fill { height:100%; border-radius:8px; background:rgba(15,17,15,.28); transition:width .3s; }
-.bars__row.top .bars__fill { background:var(--accent); }
 .bars__val { min-width:64px; text-align:right;
-  font-family:var(--font-display); font-weight:500; font-size:13px; }
-.bars__row.top .bars__val { color:var(--accent-ink); }
+  font-family:var(--font-display); font-weight:500; font-size:13px; color:#fff; }
+.bars__row.top .bars__val { color:var(--accent); }
 
 /* header save pill */
 .btn--sm { width:auto; padding:9px 16px; font-size:14px; margin:0; }
@@ -15805,26 +15818,26 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
     return (0, d.jsxs)("div", {
       className: "stat-block",
       children: [
-        (0, d.jsx)("div", { className: "panel__label", style: { marginBottom: 12 }, children: a }),
+        (0, d.jsx)("div", { className: "panel__label", style: { marginBottom: 14 }, children: a }),
         (0, d.jsx)("div", {
-          className: "bars",
+          className: "vbars",
           children: e.map((i) =>
             (0, d.jsxs)(
               "div",
               {
-                className: `bars__row${i.value === u && i.value > 0 ? " top" : ""}`,
+                className: `vbars__col${i.value === u && i.value > 0 ? " top" : ""}`,
                 children: [
-                  (0, d.jsx)("div", { className: "bars__label", children: i.label }),
-                  (0, d.jsx)("div", {
-                    className: "bars__track",
-                    children: (0, d.jsx)("div", {
-                      className: "bars__fill",
-                      style: { width: `${(i.value / u) * 100}%` },
-                    }),
-                  }),
+                  (0, d.jsx)("div", { className: "vbars__name", children: i.label }),
                   (0, d.jsxs)("div", {
-                    className: "bars__val",
-                    children: [o(i.value), t ? ` ${t}` : ""],
+                    className: "vbars__num",
+                    children: [
+                      o(i.value),
+                      t ? (0, d.jsx)("small", { children: t }) : null,
+                    ],
+                  }),
+                  (0, d.jsx)("div", {
+                    className: "vbars__bar",
+                    style: { height: `${Math.max((i.value / u) * 132, 14)}px` },
                   }),
                 ],
               },
@@ -16806,12 +16819,6 @@ input[type="date"]::-webkit-date-and-time-value { text-align:left; margin:0; }
                 ),
               ),
             }),
-        !a.retired &&
-          (0, d.jsxs)("button", {
-            className: "fab fab--accent",
-            onClick: c,
-            children: [(0, d.jsx)(Ce, {}), " Log ride"],
-          }),
       ],
     });
   }
